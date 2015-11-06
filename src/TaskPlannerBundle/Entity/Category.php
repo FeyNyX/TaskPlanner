@@ -45,7 +45,8 @@ class Category
      *
      * @ORM\Column(name="is_deleted", type="boolean")
      */
-    private $isDeleted;
+    // default value is set to 0
+    private $isDeleted = 0;
 
     /**
      * @ManyToOne(targetEntity="User", inversedBy="categories")

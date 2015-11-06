@@ -41,7 +41,8 @@
         ]
     },
     "config": {
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "vendor-dir": "/home/coderslab/TaskPlanner"
     },
     "extra": {
         "symfony-app-dir": "app",

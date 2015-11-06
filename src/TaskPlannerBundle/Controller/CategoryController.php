@@ -44,6 +44,7 @@ class CategoryController extends Controller
      * @Method("POST")
      * @Template("TaskPlannerBundle:Category:new.html.twig")
      */
+    // @todo When user creates a new category that has the same name as already existing one, redirect him to the existing one instead of showing an error.
     public function createAction(Request $request)
     {
         $entity = new Category();
@@ -51,6 +52,9 @@ class CategoryController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            // setting currently logged user as an owner of the category
+            $entity->setUser($this->getUser());
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -118,7 +122,7 @@ class CategoryController extends Controller
             throw $this->createNotFoundException('Unable to find Category entity.');
         }
 
-        // This condition throws an exception when user tries to see a category that do not belong to him.
+        // This condition throws an exception when user tries to see a category that does not belong to him.
         if ($this->getUser() != $entity->getUser()) {
             throw $this->createAccessDeniedException();
         }
@@ -138,6 +142,7 @@ class CategoryController extends Controller
      * @Method("GET")
      * @Template()
      */
+    // @todo When user tries the name of a category to one that already exists, redirect him back to the edit form and tell what was wrong instead of showing an error.
     public function editAction($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -146,6 +151,11 @@ class CategoryController extends Controller
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Category entity.');
+        }
+
+        // This condition throws an exception when user tries to edit a category that does not belong to him.
+        if ($this->getUser() != $entity->getUser()) {
+            throw $this->createAccessDeniedException();
         }
 
         $editForm = $this->createEditForm($entity);
@@ -228,6 +238,11 @@ class CategoryController extends Controller
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Category entity.');
+            }
+
+            // This condition throws an exception when user tries to delete a category that does not belong to him.
+            if ($this->getUser() != $entity->getUser()) {
+                throw $this->createAccessDeniedException();
             }
 
             $em->remove($entity);
