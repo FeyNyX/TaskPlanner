@@ -71,7 +71,8 @@ class TaskController extends Controller
      */
     private function createCreateForm(Task $entity)
     {
-        $form = $this->createForm(new TaskType(), $entity, array(
+        // I'm passing user to the TaskType because we want to be able to select categories from logged user, not all users.
+        $form = $this->createForm(new TaskType($this->getUser()), $entity, array(
             'action' => $this->generateUrl('task_create'),
             'method' => 'POST',
         ));
