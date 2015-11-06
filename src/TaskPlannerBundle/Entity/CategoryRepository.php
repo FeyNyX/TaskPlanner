@@ -10,4 +10,9 @@ namespace TaskPlannerBundle\Entity;
  */
 class CategoryRepository extends \Doctrine\ORM\EntityRepository
 {
+    // This method is essential for filtering categories by user that created them.
+    public function findByUser(User $user)
+    {
+        return $this->findBy(array("user" => $user));
+    }
 }
