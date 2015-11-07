@@ -29,8 +29,9 @@ class CategoryController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        // findByUser is a custom method that lets you get only categories created by logged user (and not by all users)
-        $entities = $em->getRepository('TaskPlannerBundle:Category')->findByUser($this->getUser());
+        // findByUserIsDeletedAware is a custom method that lets you get only categories created by logged user (and not by all users).
+        // It's aware of isDeleted status.
+        $entities = $em->getRepository('TaskPlannerBundle:Category')->findByUserIsDeletedAware($this->getUser());
 
         return array(
             'entities' => $entities,
@@ -115,9 +116,8 @@ class CategoryController extends Controller
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('TaskPlannerBundle:Category')->find($id);
-
+        // "findIsDeletedAware" is a variation of "find" that is aware of isDeleted status.
+        $entity = $em->getRepository('TaskPlannerBundle:Category')->findIsDeletedAware($id);
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Category entity.');
         }
@@ -146,8 +146,8 @@ class CategoryController extends Controller
     public function editAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('TaskPlannerBundle:Category')->find($id);
+        // "findIsDeletedAware" makes sure that user won't be able to edit already deleted category.
+        $entity = $em->getRepository('TaskPlannerBundle:Category')->findIsDeletedAware($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Category entity.');
@@ -227,6 +227,7 @@ class CategoryController extends Controller
      * @Route("/{id}", name="category_delete")
      * @Method("DELETE")
      */
+    // @todo make sure that all tasks and comments belonging to the category will be also removed when user removes the category
     public function deleteAction(Request $request, $id)
     {
         $form = $this->createDeleteForm($id);
@@ -234,7 +235,8 @@ class CategoryController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('TaskPlannerBundle:Category')->find($id);
+            // "findIsDeletedAware" makes sure that user won't be able to delete already deleted category.
+            $entity = $em->getRepository('TaskPlannerBundle:Category')->findIsDeletedAware($id);
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Category entity.');
@@ -245,7 +247,7 @@ class CategoryController extends Controller
                 throw $this->createAccessDeniedException();
             }
 
-            $em->remove($entity);
+            $entity->setIsDeleted(1);
             $em->flush();
         }
 

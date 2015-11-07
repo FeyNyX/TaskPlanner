@@ -11,8 +11,24 @@ namespace TaskPlannerBundle\Entity;
 class CategoryRepository extends \Doctrine\ORM\EntityRepository
 {
     // This method is essential for filtering categories by user that created them.
+    // @todo Remove this method if at the end of the project I won't have to use it anymore (replaced by findByUserDeletedAware).
     public function findByUser(User $user)
     {
         return $this->findBy(array("user" => $user));
+    }
+
+    // This method is essential for filtering categories by user that created them. It is aware of isDeleted status.
+    public function findByUserIsDeletedAware(User $user)
+    {
+        $em = $this->getEntityManager();
+        return $em->createQuery("SELECT c FROM TaskPlannerBundle:Category c WHERE c.user = :user AND NOT c.isDeleted = 1")->setParameter("user", $user)->getResult();
+    }
+
+    // This method is a variation of "find" that is aware of isDeleted status.
+    // "getOneOrNullResult" prevents getting no results that could lead to an unwanted exception.
+    public function findIsDeletedAware($id)
+    {
+        $em = $this->getEntityManager();
+        return $em->createQuery("SELECT c FROM TaskPlannerBundle:Category c WHERE c.id = :id AND NOT c.isDeleted = 1")->setParameter("id", $id)->getOneOrNullResult();
     }
 }
