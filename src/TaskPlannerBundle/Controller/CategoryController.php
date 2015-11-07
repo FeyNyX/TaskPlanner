@@ -288,6 +288,7 @@ class CategoryController extends Controller
                 $task->setIsDeleted(1);
             }
 
+            // Instead of really deleting it we set isDeleted status to 1 (true), for data protection.
             $entity->setIsDeleted(1);
             $em->flush();
         }
