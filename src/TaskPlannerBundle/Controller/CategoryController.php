@@ -142,7 +142,6 @@ class CategoryController extends Controller
      * @Method("GET")
      * @Template()
      */
-    // @todo When user tries the name of a category to one that already exists, redirect him back to the edit form and tell what was wrong instead of showing an error.
     public function editAction($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -161,6 +160,18 @@ class CategoryController extends Controller
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
+        // If user was trying to change a category's name to one that already exist, he will be redirected to edit page
+        // and an error explaining what went wrong will be displayed...
+        if (isset($_GET["error"])) {
+            return array(
+                'entity' => $entity,
+                'edit_form' => $editForm->createView(),
+                'delete_form' => $deleteForm->createView(),
+                'error' => $_GET["error"]
+            );
+        }
+
+        // ...otherwise he will process as usual.
         return array(
             'entity' => $entity,
             'edit_form' => $editForm->createView(),
@@ -209,7 +220,14 @@ class CategoryController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
-            $em->flush();
+            // Instead of showing an exception to the user when he tries to change a name of a category to one that already exists,
+            // he will be redirected back to the edit page and info about what went wrong will we displayed.
+            try {
+                $em->flush();
+            } catch (\Exception $e) {
+                $error = $entity->getName();
+                return $this->redirect($this->generateUrl('category_edit', array('id' => $id, 'error' => $error)));
+            }
 
             return $this->redirect($this->generateUrl('category_edit', array('id' => $id)));
         }

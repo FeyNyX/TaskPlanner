@@ -3,9 +3,13 @@
 {% block body -%}
     <h1>Category edit</h1>
 
+    {% if error is defined %}
+        <strong><h3>Error: Category "{{ error }}" already exists.</h3></strong>
+    {% endif %}
+
     {{ form(edit_form) }}
 
-        <ul class="record_actions">
+    <ul class="record_actions">
     <li>
         <a href="{{ path('category') }}">
             Back to the list
