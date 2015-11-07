@@ -3,6 +3,10 @@
 {% block body -%}
     <h1>Category creation</h1>
 
+    {% if error is defined %}
+        <strong><h3>Error: Category "{{ error }}" already exists.</h3></strong>
+    {% endif %}
+
     {{ form(form) }}
 
         <ul class="record_actions">

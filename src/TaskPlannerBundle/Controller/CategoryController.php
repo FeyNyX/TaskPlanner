@@ -45,7 +45,7 @@ class CategoryController extends Controller
      * @Method("POST")
      * @Template("TaskPlannerBundle:Category:new.html.twig")
      */
-    // @todo When user creates a new category that has the same name as already existing one, redirect him to the existing one instead of showing an error.
+    // @todo Resolve a problem in a scenario when user first deletes a category named "xxx", and then tries to create a new one with the same name. Because of the isDeleted it will tell user that this name already exists. The same problem will occur in edit.
     public function createAction(Request $request)
     {
         $entity = new Category();
@@ -58,7 +58,14 @@ class CategoryController extends Controller
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
-            $em->flush();
+            // Instead of showing an exception to the user when he tries to change a name of a category to one that already exists,
+            // he will be redirected back to the edit page and info about what went wrong will we displayed.
+            try {
+                $em->flush();
+            } catch (\Exception $e) {
+                $error = $entity->getName();
+                return $this->redirect($this->generateUrl('category_new', array('error' => $error)));
+            }
 
             return $this->redirect($this->generateUrl('category_show', array('id' => $entity->getId())));
         }
@@ -99,6 +106,16 @@ class CategoryController extends Controller
     {
         $entity = new Category();
         $form = $this->createCreateForm($entity);
+
+        // If user was trying to create a category with name that already exist, he will be redirected to creation page
+        // and an error explaining what went wrong will be displayed.
+        if (isset($_GET["error"])) {
+            return array(
+                'entity' => $entity,
+                'form' => $form->createView(),
+                'error' => $_GET["error"]
+            );
+        }
 
         return array(
             'entity' => $entity,
@@ -161,7 +178,7 @@ class CategoryController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         // If user was trying to change a category's name to one that already exist, he will be redirected to edit page
-        // and an error explaining what went wrong will be displayed...
+        // and an error explaining what went wrong will be displayed.
         if (isset($_GET["error"])) {
             return array(
                 'entity' => $entity,
@@ -171,7 +188,6 @@ class CategoryController extends Controller
             );
         }
 
-        // ...otherwise he will process as usual.
         return array(
             'entity' => $entity,
             'edit_form' => $editForm->createView(),
