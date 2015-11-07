@@ -45,7 +45,6 @@ class CategoryController extends Controller
      * @Method("POST")
      * @Template("TaskPlannerBundle:Category:new.html.twig")
      */
-    // @todo Resolve a problem in a scenario when user first deletes a category named "xxx", and then tries to create a new one with the same name. Because of the isDeleted it will tell user that this name already exists. The same problem will occur in edit.
     public function createAction(Request $request)
     {
         $entity = new Category();

@@ -45,7 +45,6 @@ class TaskController extends Controller
      * @Method("POST")
      * @Template("TaskPlannerBundle:Task:new.html.twig")
      */
-    // @todo Ensure that user can make a task only when he has at least 1 category created.
     public function createAction(Request $request)
     {
         $entity = new Task();
@@ -53,11 +52,11 @@ class TaskController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
             // setting additional values not handled in form
             $entity->setUser($this->getUser());
             $entity->setCreatedAt(new \DateTime());
 
-            $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
@@ -99,6 +98,14 @@ class TaskController extends Controller
      */
     public function newAction()
     {
+        $em = $this->getDoctrine()->getManager();
+        // Gets all categories that belong to the logged in user. IsDeleted aware.
+        $userCategories = $em->getRepository("TaskPlannerBundle:Task")->findUserCategoriesIsDeletedAware($this->getUser());
+        // We don't want to let user create a task unless he has at least 1 category created.
+        if (count($userCategories) < 1) {
+            return $this->redirect($this->generateUrl('category_new', array('error' => "no_categories")));
+        }
+
         $entity = new Task();
         $form   = $this->createCreateForm($entity);
 

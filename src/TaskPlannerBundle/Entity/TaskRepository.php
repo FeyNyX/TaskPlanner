@@ -24,4 +24,10 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
         $em = $this->getEntityManager();
         return $em->createQuery("SELECT t FROM TaskPlannerBundle:Task t WHERE t.id = :id AND NOT t.isDeleted = 1")->setParameter("id", $id)->getOneOrNullResult();
     }
+
+    public function findUserCategoriesIsDeletedAware(User $user)
+    {
+        $em = $this->getEntityManager();
+        return $em->createQuery("SELECT c FROM TaskPlannerBundle:Category c WHERE c.user = :user AND NOT c.isDeleted = 1")->setParameter("user", $user)->getResult();
+    }
 }
