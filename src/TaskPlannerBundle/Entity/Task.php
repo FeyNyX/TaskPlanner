@@ -65,14 +65,13 @@ class Task
      *
      * @ORM\Column(name="is_finished", type="boolean")
      */
-    private $isFinished;
+    private $isFinished = 0;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="is_deleted", type="boolean")
      */
-    // default value is set to 0
     private $isDeleted = 0;
 
     /**

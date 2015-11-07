@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Validator\Constraints\DateTime;
 use TaskPlannerBundle\Entity\Task;
 use TaskPlannerBundle\Form\TaskType;
 
@@ -29,7 +30,9 @@ class TaskController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('TaskPlannerBundle:Task')->findAll();
+        // findByUserIsDeletedAware is a custom method that lets you get only tasks created by logged user (and not by all users).
+        // It's aware of isDeleted status.
+        $entities = $em->getRepository('TaskPlannerBundle:Task')->findByUserIsDeletedAware($this->getUser());
 
         return array(
             'entities' => $entities,
@@ -42,6 +45,7 @@ class TaskController extends Controller
      * @Method("POST")
      * @Template("TaskPlannerBundle:Task:new.html.twig")
      */
+    // @todo Ensure that user can make a task only when he has at least 1 category created.
     public function createAction(Request $request)
     {
         $entity = new Task();
@@ -49,6 +53,10 @@ class TaskController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            // setting additional values not handled in form
+            $entity->setUser($this->getUser());
+            $entity->setCreatedAt(new \DateTime());
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -111,10 +119,16 @@ class TaskController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('TaskPlannerBundle:Task')->find($id);
+        // "findIsDeletedAware" is a variation of "find" that is aware of isDeleted status.
+        $entity = $em->getRepository('TaskPlannerBundle:Task')->findIsDeletedAware($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Task entity.');
+        }
+
+        // This condition throws an exception when user tries to see a task that does not belong to him.
+        if ($this->getUser() != $entity->getUser()) {
+            throw $this->createAccessDeniedException();
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -136,10 +150,16 @@ class TaskController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('TaskPlannerBundle:Task')->find($id);
+        // "findIsDeletedAware" makes sure that user won't be able to edit already deleted task.
+        $entity = $em->getRepository('TaskPlannerBundle:Task')->findIsDeletedAware($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Task entity.');
+        }
+
+        // This condition throws an exception when user tries to edit a task that does not belong to him.
+        if ($this->getUser() != $entity->getUser()) {
+            throw $this->createAccessDeniedException();
         }
 
         $editForm = $this->createEditForm($entity);
@@ -161,7 +181,7 @@ class TaskController extends Controller
     */
     private function createEditForm(Task $entity)
     {
-        $form = $this->createForm(new TaskType(), $entity, array(
+        $form = $this->createForm(new TaskType($entity->getUser()), $entity, array(
             'action' => $this->generateUrl('task_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
@@ -216,13 +236,25 @@ class TaskController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('TaskPlannerBundle:Task')->find($id);
+            // "findIsDeletedAware" makes sure that user won't be able to delete already deleted task.
+            $entity = $em->getRepository('TaskPlannerBundle:Task')->findIsDeletedAware($id);
 
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Task entity.');
             }
 
-            $em->remove($entity);
+            // This condition throws an exception when user tries to delete a task that does not belong to him.
+            if ($this->getUser() != $entity->getUser()) {
+                throw $this->createAccessDeniedException();
+            }
+
+            // This loop cascades deletion of comments that belong to the deleted task.
+            foreach ($entity->getComments() as $comment) {
+                $comment->setIsDeleted(1);
+            }
+
+            // Instead of really deleting it we set isDeleted status to 1 (true), for data protection.
+            $entity->setIsDeleted(1);
             $em->flush();
         }
 

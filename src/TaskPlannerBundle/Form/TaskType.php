@@ -33,13 +33,9 @@ class TaskType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('createdAt')
             ->add('description')
             ->add('toBeFinishedAt')
             ->add('priority')
-            ->add('isFinished')
-            ->add('isDeleted')
-            ->add('user')
             ->add('category', 'entity', array(
                 'class' => 'TaskPlannerBundle:Category',
                 // by using query builder here I can select categories that belong to the currently logged user only
