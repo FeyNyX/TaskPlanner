@@ -227,7 +227,6 @@ class CategoryController extends Controller
      * @Route("/{id}", name="category_delete")
      * @Method("DELETE")
      */
-    // @todo make sure that all tasks and comments belonging to the category will be also removed when user removes the category
     public function deleteAction(Request $request, $id)
     {
         $form = $this->createDeleteForm($id);
@@ -245,6 +244,14 @@ class CategoryController extends Controller
             // This condition throws an exception when user tries to delete a category that does not belong to him.
             if ($this->getUser() != $entity->getUser()) {
                 throw $this->createAccessDeniedException();
+            }
+
+            // This loop cascades deletion of tasks and comments that belong to the deleted category.
+            foreach ($entity->getTasks() as $task) {
+                foreach ($task->getComments() as $comment) {
+                    $comment->setIsDeleted(1);
+                }
+                $task->setIsDeleted(1);
             }
 
             $entity->setIsDeleted(1);
