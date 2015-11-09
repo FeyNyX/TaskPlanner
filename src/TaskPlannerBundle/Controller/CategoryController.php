@@ -1,5 +1,4 @@
 <?php
-// @todo Resolve a general problem that will occur in controllers when user will delete item named "xxx" and then will try to create a new item named as the previous one. It won't work because the name will conflict with "isDeleted" item.
 namespace TaskPlannerBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -288,6 +287,13 @@ class CategoryController extends Controller
 
             // Instead of really deleting it we set isDeleted status to 1 (true), for data protection.
             $entity->setIsDeleted(1);
+
+            // changing name to avoid name collisions in future (name and user_id are unique pair)
+            $name = $entity->getName();
+            $date = new \DateTime();
+            $formattedDate = $date->format('YmdHis');
+            $entity->setName($name . "_deleted_" . $formattedDate);
+
             $em->flush();
         }
 
