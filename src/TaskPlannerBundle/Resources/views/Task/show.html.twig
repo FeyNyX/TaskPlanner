@@ -39,7 +39,14 @@
             </tr>
         </tbody>
     </table>
+    <p>
+    {% for comment in entity.comments %}
+        - {{ comment.content }}<br>
+    {% endfor %}
 
+    {{ form(comment_form) }}
+    <hr>
+    </p>
         <ul class="record_actions">
     <li>
         <a href="{{ path('task') }}">

@@ -2,9 +2,14 @@
 
 namespace TaskPlannerBundle\Form;
 
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use TaskPlannerBundle\Entity\Task;
+use TaskPlannerBundle\Entity\TaskRepository;
+use TaskPlannerBundle\Entity\User;
+use TaskPlannerBundle\TaskPlannerBundle;
 
 class CommentType extends AbstractType
 {
@@ -15,10 +20,7 @@ class CommentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('content')
-            ->add('createdAt')
-            ->add('isDeleted')
-            ->add('task')
+            ->add('content', 'text', array('label' => 'Comment: '))
         ;
     }
     

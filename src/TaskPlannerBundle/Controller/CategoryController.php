@@ -1,5 +1,5 @@
 <?php
-
+// @todo Resolve a general problem that will occur in controllers when user will delete item named "xxx" and then will try to create a new item named as the previous one. It won't work because the name will conflict with "isDeleted" item.
 namespace TaskPlannerBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +17,6 @@ use TaskPlannerBundle\Form\CategoryType;
  */
 class CategoryController extends Controller
 {
-
     /**
      * Lists all Category entities.
      *

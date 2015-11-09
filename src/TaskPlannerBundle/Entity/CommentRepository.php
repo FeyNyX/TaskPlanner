@@ -10,4 +10,35 @@ namespace TaskPlannerBundle\Entity;
  */
 class CommentRepository extends \Doctrine\ORM\EntityRepository
 {
+    // This method is essential for filtering comments by user that created them. It is aware of isDeleted status.
+    public function findByTaskIsDeletedAware(User $user)
+    {
+        $em = $this->getEntityManager();
+        return $em->createQuery("SELECT c FROM TaskPlannerBundle:Comment c WHERE c.user = :user AND NOT c.isDeleted = 1")->setParameter("user", $user)->getResult();
+    }
+
+    // This method is a variation of "find" that is aware of isDeleted status.
+    // "getOneOrNullResult" prevents getting no results that could lead to an unwanted exception.
+    public function findIsDeletedAware($id)
+    {
+        $em = $this->getEntityManager();
+        return $em->createQuery("SELECT c FROM TaskPlannerBundle:Comment c WHERE c.id = :id AND NOT c.isDeleted = 1")->setParameter("id", $id)->getOneOrNullResult();
+    }
+
+    // checking if user is owner of the task and that the task id not deleted
+    public function isTaskOwnerIsDeletedAware(User $user, Task $task)
+    {
+        $em = $this->getEntityManager();
+        $check = $em->createQuery("SELECT t FROM TaskPlannerBundle:Task t WHERE t.user = :user AND t.id = :id AND NOT t.isDeleted = 1")
+            ->setParameter("user", $user)
+            ->setParameter("id", $task)
+            ->getResult()
+        ;
+
+        if (count($check) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

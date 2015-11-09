@@ -8,7 +8,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Validator\Constraints\DateTime;
+use TaskPlannerBundle\Entity\Comment;
 use TaskPlannerBundle\Entity\Task;
+use TaskPlannerBundle\Form\CommentType;
 use TaskPlannerBundle\Form\TaskType;
 
 /**
@@ -140,7 +142,14 @@ class TaskController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
+        $commentForm = $this->createForm(new CommentType(), new Comment(), array(
+            'action' => $this->generateUrl('comment_create', array('taskId' => $entity->getId())),
+            'method' => 'POST',
+            ))
+            ->add('submit', 'submit', array('label' => 'Add this comment'));
+
         return array(
+            'comment_form' => $commentForm->createView(),
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
         );
