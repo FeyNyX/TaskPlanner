@@ -1,19 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    {% block style %}
+        <link rel="stylesheet" href="{{ asset('bundles/taskplanner/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/taskplanner/css/style.css') }}">
+        <script src="{{ asset('bundles/taskplanner/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('bundles/taskplanner/js/bootstrap.min.js') }}"></script>
+    {% endblock %}
 </head>
 <body>
 <div>
     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-        {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
-        <a href="{{ path('fos_user_security_logout') }}">
-            {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-        </a>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{{ path('taskplanner_default_index') }}">TaskPlanner</a>
+                </div>
+                <div>
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="{{ path('taskplanner_default_index')}}">Home</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{{ path('fos_user_profile_show') }}"><span
+                                        class="glyphicon glyphicon-user"></span> {{ app.user.username }}'s Profile</a>
+                        </li>
+                        <li><a href="{{ path('fos_user_security_logout') }}"><span
+                                        class="glyphicon glyphicon-log-out"></span> {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            {% block body %}{% endblock %}
+            {% block javascripts %}{% endblock %}
+        </div>
     {% else %}
-        <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">TaskPlanner</a>
+                </div>
+                <div>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{{ path('fos_user_registration_register') }}"><span
+                                        class="glyphicon glyphicon-user"></span> Sign up</a></li>
+                        <li><a href="{{ path('fos_user_security_login') }}"><span
+                                        class="glyphicon glyphicon-log-in"></span> {{ 'layout.login'|trans({}, 'FOSUserBundle') }}
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="jumbotron">
+                <h1>TaskPlanner</h1>
+
+                <p>TaskPlanner helps you organize your life by letting you create tasks organized by categories.
+                    You can even comment progress of your tasks.</p>
+            </div>
+            <div class="row">
+                <div class="col-sm-offset-4 col-sm-4">
+                    <h2 class="text-center">Let's get started!</h2>
+                </div>
+                <div class="col-sm-offset-4 col-sm-4">
+                    <a href="{{ path('fos_user_security_login') }}">
+                        <button type="button" class="btn btn-primary btn-block main"><span
+                                    class="glyphicon glyphicon-log-in"></span> {{ 'layout.login'|trans({}, 'FOSUserBundle') }}
+                        </button>
+                    </a>
+                </div>
+                <div class="col-sm-offset-4 col-sm-4">
+                    <a href="{{ path('fos_user_registration_register') }}">
+                        <button type="button" class="btn btn-primary btn-block main"><span
+                                    class="glyphicon glyphicon-user"></span> Sign up
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
     {% endif %}
 </div>
 
