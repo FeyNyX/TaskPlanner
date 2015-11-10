@@ -8,10 +8,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use TaskPlannerBundle\Entity\Category;
 use TaskPlannerBundle\Form\CategoryType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * Category controller.
  *
+ * @Security("has_role('ROLE_USER')")
  * @Route("/category")
  */
 class CategoryController extends Controller

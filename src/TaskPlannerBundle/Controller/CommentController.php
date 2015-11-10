@@ -9,10 +9,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use TaskPlannerBundle\Entity\Comment;
 use TaskPlannerBundle\Form\CommentType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * Comment controller.
  *
+ * @Security("has_role('ROLE_USER')")
  * @Route("/comment")
  */
 class CommentController extends Controller
@@ -63,7 +65,7 @@ class CommentController extends Controller
                 throw $this->createAccessDeniedException('You can not create a comment to this task. Either it is deleted and/or it doesn\'t belong to you.');
             }
 
-            // "taskId" is being redirected through all actions and views that take part in creating a new comment.
+            // task is being redirected through all actions and views that take part in creating a new comment.
             $entity->setTask($task);
 
             $em->persist($entity);

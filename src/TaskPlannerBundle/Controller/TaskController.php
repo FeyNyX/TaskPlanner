@@ -12,15 +12,16 @@ use TaskPlannerBundle\Entity\Comment;
 use TaskPlannerBundle\Entity\Task;
 use TaskPlannerBundle\Form\CommentType;
 use TaskPlannerBundle\Form\TaskType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * Task controller.
  *
+ * @Security("has_role('ROLE_USER')")
  * @Route("/task")
  */
 class TaskController extends Controller
 {
-
     /**
      * Lists all Task entities.
      *
@@ -40,6 +41,7 @@ class TaskController extends Controller
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new Task entity.
      *
@@ -142,6 +144,7 @@ class TaskController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 
+        // This form is used to add a comment to a task on a task's page.
         $commentForm = $this->createForm(new CommentType(), new Comment(), array(
             'action' => $this->generateUrl('comment_create', array('taskId' => $entity->getId())),
             'method' => 'POST',
@@ -206,6 +209,7 @@ class TaskController extends Controller
 
         return $form;
     }
+
     /**
      * Edits an existing Task entity.
      *
@@ -239,6 +243,7 @@ class TaskController extends Controller
             'delete_form' => $deleteForm->createView(),
         );
     }
+
     /**
      * Deletes a Task entity.
      *
