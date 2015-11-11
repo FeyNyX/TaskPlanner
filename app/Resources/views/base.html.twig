@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="{{ asset('bundles/taskplanner/css/style.css') }}">
         <script src="{{ asset('bundles/taskplanner/js/jquery.min.js') }}"></script>
         <script src="{{ asset('bundles/taskplanner/js/bootstrap.min.js') }}"></script>
+        <link href='https://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
     {% endblock %}
 </head>
 <body>
@@ -21,7 +22,7 @@
                 </div>
                 <div>
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="{{ path('taskplanner_default_index')}}">Home</a></li>
+                        <li class="active"><a href="{{ path('taskplanner_default_index') }}">Home</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="{{ path('fos_user_profile_show') }}"><span
@@ -59,28 +60,54 @@
             <div class="jumbotron">
                 <h1>TaskPlanner</h1>
 
-                <p>TaskPlanner helps you organize your life by letting you create tasks organized by categories.
+                <p>TaskPlanner helps you organize your life by letting you create tasks organized by categories.<br>
                     You can even comment progress of your tasks.</p>
             </div>
             <div class="row">
                 <div class="col-sm-offset-4 col-sm-4">
-                    <h2 class="text-center">Let's get started!</h2>
-                </div>
-                <div class="col-sm-offset-4 col-sm-4">
-                    <a href="{{ path('fos_user_security_login') }}">
-                        <button type="button" class="btn btn-primary btn-block main"><span
-                                    class="glyphicon glyphicon-log-in"></span> {{ 'layout.login'|trans({}, 'FOSUserBundle') }}
-                        </button>
-                    </a>
-                </div>
-                <div class="col-sm-offset-4 col-sm-4">
-                    <a href="{{ path('fos_user_registration_register') }}">
-                        <button type="button" class="btn btn-primary btn-block main"><span
-                                    class="glyphicon glyphicon-user"></span> Sign up
-                        </button>
-                    </a>
+                    <div class="panel panel-default panelMain">
+                        <div class="panel-heading panelMainHeading">
+
+                            <h2 class="text-center">Let's get started!</h2>
+
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-sm-11">
+                                <button type="button" class="btn btn-primary btn-block main" data-toggle="modal"
+                                        data-target="#loginModal"><span
+                                            class="glyphicon glyphicon-log-in"></span> {{ 'layout.login'|trans({}, 'FOSUserBundle') }}
+                                </button>
+                            </div>
+                            <div class="col-sm-11">
+                                <a href="{{ path('fos_user_registration_register') }}">
+                                    <button type="button" class="btn btn-primary btn-block main"><span
+                                                class="glyphicon glyphicon-user"></span> Sign up
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <!-- Login Modal -->
+            <div id="loginModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Login Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Log in</h4>
+                        </div>
+                        <div class="modal-body">
+                            {{ render(controller("FOSUserBundle:Security:login")) }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                </div>
+
+                </div>
         </div>
     {% endif %}
 </div>
