@@ -4,7 +4,7 @@
     {% if error %}
         <div xmlns="http://www.w3.org/1999/html">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
-
+    use Bootstrap Horizontal Form
     <div class="userForm">
         <form action="{{ path("fos_user_security_check") }}" method="post">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token }}"/>

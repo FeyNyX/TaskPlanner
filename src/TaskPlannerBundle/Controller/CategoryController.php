@@ -66,7 +66,7 @@ class CategoryController extends Controller
                 return $this->redirect($this->generateUrl('category_new', array('error' => $error)));
             }
 
-            return $this->redirect($this->generateUrl('category_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('taskplanner_default_index'));
         }
 
         return array(

@@ -1,44 +1,121 @@
-{% extends '::base.html.twig' %}
-
 {% block body -%}
-    <h1>Category</h1>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-sm-4">
+                    <h2 class="tasks">{{ entity.name }} tasks <span class="badge">{{ entity.tasks|length }}</span></h2>
+                </div>
+                <div class="col-sm-offset-6 col-sm-2">
+                    <button type="button" class="btn btn-info btn-lg" data-toggle="modal"
+                            data-target="#addTaskModalcat{{ entity.id }}">
+                        Add a task
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="panel-group" id="accordion">
+                {% for task in entity.tasks %}
+                    {% if task.isFinished %}
+                        <del>
+                    {% endif %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading accordion">
+                            <h4 class="panel-title tasks">
+                                <a data-toggle="collapse" data-parent="#accordion"
+                                   href="#collapse{{ task.id }}cat{{ entity.id }}">
+                                    {{ task.name }}</a>
+                            </h4>
+                            <h6 class="tasks">
+                                Deadline: {{ task.toBeFinishedAt|date('Y-m-d H:i:s') }} | Created
+                                at: {{ task.createdAt|date('Y-m-d H:i:s') }} |
+                                Priority:
+                                {% for point in range(1, task.priority) %}
+                                    <span class="glyphicon glyphicon-flash"></span>
+                                {% endfor %}
+                            </h6>
+                        </div>
+                        <div id="collapse{{ task.id }}cat{{ entity.id }}" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="well break-words">{{ task.description }}</div>
+                                {% if task.comments|length > 0 %}
+                                    <div class="panel-group">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse"
+                                                       href="#collapse{{ task.id }}cat{{ entity.id }}comments">Comments</a>
+                                                    <span class="badge">{{ task.comments|length }}</span>
+                                                </h4>
+                                            </div>
+                                            <div id="collapse{{ task.id }}cat{{ entity.id }}comments"
+                                                 class="panel-collapse collapse">
+                                                <ul class="list-group">
+                                                    {% for comment in task.comments %}
+                                                        <li class="list-group-item">{{ comment.content }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <button type="button" class="btn btn-info btn-lg" data-toggle="modal"
+                                        data-target="#addCommentModal{{ task.id }}cat{{ entity.id }}">
+                                    Add a comment
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% if task.isFinished %}
+                        </del>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="panel-footer"></div>
+    </div>
 
-    <table class="record_properties">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ entity.name }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ entity.description }}</td>
-            </tr>
-            <tr>
-                <th>Isdeleted</th>
-                <td>{{ entity.isDeleted }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- AddTaskModal -->
+    <div id="addTaskModalcat{{ entity.id }}" class="modal fade" role="dialog">
+        <div class="modal-dialog">
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('category') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('category_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
-<br>
+            <!-- AddTaskModal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add a new task</h4>
+                </div>
+                <div class="modal-body">
+                    {{ render(controller("TaskPlannerBundle:Task:new")) }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     {% for task in entity.tasks %}
-            {{ task.name }} <br>
+        <!-- AddCommentModal -->
+        <div id="addCommentModal{{ task.id }}cat{{ entity.id }}" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- AddCommentModal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add a new comment</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{ render(controller("TaskPlannerBundle:Task:show", {"id": task.id})) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}

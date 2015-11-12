@@ -71,8 +71,7 @@ class CommentController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            // redirecting back to the task that the comment was being created for
-            return $this->redirect($this->generateUrl('task_show', array('id' => $taskId)));
+            return $this->redirect($this->generateUrl('taskplanner_default_index'));
         }
 
         return array(
