@@ -94,6 +94,32 @@ class TaskController extends Controller
     }
 
     /**
+     * @Route("/finished/{id}", name="task_finished")
+     *
+     */
+    public function finishedAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $task = $em->getRepository("TaskPlannerBundle:Task")->find($id);
+
+        if ($task->getUser() != $this->getUser()) {
+            return $this->createAccessDeniedException();
+        }
+
+        // toggling isFinished
+        if ($task->getIsFinished() == 0) {
+            $task->setIsFinished(1);
+        } else {
+            $task->setIsFinished(0);
+        }
+
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('taskplanner_default_index'));
+
+    }
+
+    /**
      * Displays a form to create a new Task entity.
      *
      * @Route("/new", name="task_new")
