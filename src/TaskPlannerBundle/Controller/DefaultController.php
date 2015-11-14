@@ -14,8 +14,12 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        // getting all user's categories
         $repo = $this->getDoctrine()->getRepository("TaskPlannerBundle:Category");
+        // getting all user's categories if user is logged in
+        if (null == ($this->getUser())) {
+            return array();
+        }
+
         $categories = $repo->findByUserIsDeletedAware($this->getUser());
 
         return array(
