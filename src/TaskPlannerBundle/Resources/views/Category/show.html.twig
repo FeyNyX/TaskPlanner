@@ -6,8 +6,10 @@
                     <h2 class="tasks">{{ entity.name }} tasks <span class="badge">{{ entity.tasks|length }}</span></h2>
                 </div>
                 <div class="col-sm-offset-6 col-sm-2">
-                    <button type="button" class="btn btn-info btn-lg" data-toggle="modal"
-                            data-target="#addTaskModalcat{{ entity.id }}">
+                    <!-- Modal button (new task) -->
+                    <button type="button" name="{{ path("task_new") }}"
+                            class="ajaxModalButton btn btn-primary btn-block main" data-toggle="modal"
+                            data-target="#ajaxModal">
                         Add a task
                     </button>
                 </div>
@@ -22,8 +24,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading accordion">
                             <h4 class="panel-title tasks">
-                                <a data-toggle="collapse" data-parent="#accordion"
-                                   href="#collapse{{ task.id }}cat{{ entity.id }}">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ task.id }}">
                                     {{ task.name }}</a>
                             </h4>
                             <h6 class="tasks">
@@ -35,7 +36,7 @@
                                 {% endfor %}
                             </h6>
                         </div>
-                        <div id="collapse{{ task.id }}cat{{ entity.id }}" class="panel-collapse collapse">
+                        <div id="collapse{{ task.id }}" class="panel-collapse collapse">
                             <div class="panel-body">
                                 <div class="well break-words">{{ task.description }}</div>
                                 {% if task.comments|length > 0 %}
@@ -43,13 +44,11 @@
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
                                                 <h4 class="panel-title">
-                                                    <a data-toggle="collapse"
-                                                       href="#collapse{{ task.id }}cat{{ entity.id }}comments">Comments</a>
+                                                    <a data-toggle="collapse" href="#collapse{{ task.id }}comments">Comments</a>
                                                     <span class="badge">{{ task.comments|length }}</span>
                                                 </h4>
                                             </div>
-                                            <div id="collapse{{ task.id }}cat{{ entity.id }}comments"
-                                                 class="panel-collapse collapse">
+                                            <div id="collapse{{ task.id }}comments" class="panel-collapse collapse">
                                                 <ul class="list-group">
                                                     {% for comment in task.comments %}
                                                         <li class="list-group-item">{{ comment.content }}</li>
@@ -59,8 +58,10 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                                <button type="button" class="btn btn-info btn-lg" data-toggle="modal"
-                                        data-target="#addCommentModal{{ task.id }}cat{{ entity.id }}">
+                                <!-- Modal button (new comment) -->
+                                <button type="button" name="{{ path("comment_new", {"taskId": task.id}) }}"
+                                        class="ajaxModalButton btn btn-primary btn-block main" data-toggle="modal"
+                                        data-target="#ajaxModal">
                                     Add a comment
                                 </button>
                             </div>
@@ -74,48 +75,4 @@
         </div>
         <div class="panel-footer"></div>
     </div>
-
-    <!-- AddTaskModal -->
-    <div id="addTaskModalcat{{ entity.id }}" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- AddTaskModal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add a new task</h4>
-                </div>
-                <div class="modal-body">
-                    {{ render(controller("TaskPlannerBundle:Task:new")) }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    {% for task in entity.tasks %}
-        <!-- AddCommentModal -->
-        <div id="addCommentModal{{ task.id }}cat{{ entity.id }}" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- AddCommentModal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add a new comment</h4>
-                    </div>
-                    <div class="modal-body">
-                        {{ render(controller("TaskPlannerBundle:Task:show", {"id": task.id})) }}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    {% endfor %}
 {% endblock %}

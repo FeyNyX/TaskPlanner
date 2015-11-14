@@ -6,7 +6,10 @@
                     <h2 class="tasks">All tasks <span class="badge">{{ entities|length }}</span></h2>
                 </div>
                 <div class="col-sm-offset-6 col-sm-2">
-                    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#addTaskModal">
+                    <!-- Modal button (new task) -->
+                    <button type="button" name="{{ path("task_new") }}"
+                            class="ajaxModalButton btn btn-primary btn-block main" data-toggle="modal"
+                            data-target="#ajaxModal">
                         Add a task
                     </button>
                 </div>
@@ -55,8 +58,10 @@
                                         </div>
                                     </div>
                                 {% endif %}
-                                <button type="button" class="btn btn-info btn-lg" data-toggle="modal"
-                                        data-target="#addCommentModal{{ task.id }}">
+                                <!-- Modal button (new comment) -->
+                                <button type="button" name="{{ path("comment_new", {"taskId": task.id}) }}"
+                                        class="ajaxModalButton btn btn-primary btn-block main" data-toggle="modal"
+                                        data-target="#ajaxModal">
                                     Add a comment
                                 </button>
                             </div>
@@ -70,48 +75,4 @@
         </div>
         <div class="panel-footer"></div>
     </div>
-
-    <!-- AddTaskModal -->
-    <div id="addTaskModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- AddTaskModal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add a new task</h4>
-                </div>
-                <div class="modal-body">
-                    {{ render(controller("TaskPlannerBundle:Task:new")) }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    {% for task in entities %}
-        <!-- AddCommentModal -->
-        <div id="addCommentModal{{ task.id }}" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- AddCommentModal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add a new comment</h4>
-                    </div>
-                    <div class="modal-body">
-                        {{ render(controller("TaskPlannerBundle:Task:show", {"id": task.id})) }}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    {% endfor %}
 {% endblock %}

@@ -145,6 +145,7 @@ crashlytics-build.properties
 !bin/symfony_requirements
 /vendor/
 
+/web
 # Assets and user uploads
 /web/uploads/
 

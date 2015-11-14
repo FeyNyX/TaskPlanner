@@ -7,8 +7,6 @@
     {% block style %}
         <link rel="stylesheet" href="{{ asset('bundles/taskplanner/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('bundles/taskplanner/css/style.css') }}">
-        <script src="{{ asset('bundles/taskplanner/js/jquery.min.js') }}"></script>
-        <script src="{{ asset('bundles/taskplanner/js/bootstrap.min.js') }}"></script>
         <link href='https://fonts.googleapis.com/css?family=Raleway:500' rel='stylesheet' type='text/css'>
     {% endblock %}
 </head>
@@ -35,6 +33,16 @@
             </div>
         </div>
     </nav>
+
+<!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- AJAX -->
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
@@ -124,5 +132,9 @@
         {% block fos_user_content %}
         {% endblock fos_user_content %}
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{{ asset('bundles/taskplanner/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('bundles/taskplanner/js/ajax.js') }}"></script>
 </body>
 </html>
