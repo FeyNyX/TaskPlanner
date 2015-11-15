@@ -10,4 +10,10 @@ $(document).ready(function () {
             $('#tasks').empty().append(response);
         });
     });
+
+    $(document).on('click', '.commentDelete', function (event) {
+        event.preventDefault();
+        $.post($(this).attr('name'));
+        $(this).parentsUntil("li", 0, 2).remove();
+    });
 });

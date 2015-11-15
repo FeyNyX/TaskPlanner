@@ -355,5 +355,24 @@ class Task
     {
         return $this->comments;
     }
+
+    /**
+     * Get not deleted comments
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTrueComments()
+    {
+        $comments = $this->comments;
+        $trueComments = [];
+
+        foreach ($comments as $comment) {
+            if ($comment->getIsDeleted() == 0) {
+                $trueComments[] = $comment;
+            }
+        }
+
+        return $trueComments;
+    }
 }
 

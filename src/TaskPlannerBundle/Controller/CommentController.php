@@ -226,49 +226,28 @@ class CommentController extends Controller
     /**
      * Deletes a Comment entity.
      *
-     * @Route("/{id}", name="comment_delete")
-     * @Method("DELETE")
+     * @Route("/delete/{id}", name="comment_delete")
      */
     public function deleteAction(Request $request, $id)
     {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        // "findIsDeletedAware" makes sure that user won't be able to delete already deleted comment.
+        $comment = $em->getRepository('TaskPlannerBundle:Comment')->findIsDeletedAware($id);
+        $task = $comment->getTask();
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            // "findIsDeletedAware" makes sure that user won't be able to delete already deleted comment.
-            $entity = $em->getRepository('TaskPlannerBundle:Comment')->findIsDeletedAware($id);
-
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Comment entity.');
-            }
-
-            // This condition throws an exception when user tries to delete a comment that does not belong to him.
-            if ($this->getUser() != $entity->getUser()) {
-                throw $this->createAccessDeniedException();
-            }
-
-            // Instead of really deleting it we set isDeleted status to 1 (true), for data protection.
-            $entity->setIsDeleted(1);
-            $em->flush();
+        if (!$comment) {
+            return ('Unable to find Comment entity.');
         }
 
-        return $this->redirect($this->generateUrl('comment'));
-    }
+        // This condition throws an exception when user tries to delete a comment that does not belong to him.
+        if ($this->getUser() != $task->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
 
-    /**
-     * Creates a form to delete a Comment entity by id.
-     *
-     * @param mixed $id The entity id
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('comment_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm();
+        // Instead of really deleting it we set isDeleted status to 1 (true), for data protection.
+        $comment->setIsDeleted(1);
+        $em->flush();
+
+        return true;
     }
 }
