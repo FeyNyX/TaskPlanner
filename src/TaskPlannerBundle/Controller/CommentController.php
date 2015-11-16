@@ -11,6 +11,7 @@ use TaskPlannerBundle\Entity\Comment;
 use TaskPlannerBundle\Form\CommentType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
+// @todo Remove all unnecesary actions and secure existing ones.
 /**
  * Comment controller.
  *

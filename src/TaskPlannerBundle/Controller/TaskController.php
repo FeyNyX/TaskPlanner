@@ -14,6 +14,7 @@ use TaskPlannerBundle\Form\CommentType;
 use TaskPlannerBundle\Form\TaskType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
+// @todo Remove all unnecesary actions and secure existing ones.
 /**
  * Task controller.
  *

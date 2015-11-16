@@ -10,6 +10,7 @@ use TaskPlannerBundle\Entity\Category;
 use TaskPlannerBundle\Form\CategoryType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
+// @todo Remove all unnecesary actions and secure existing ones.
 /**
  * Category controller.
  *
