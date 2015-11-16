@@ -30,4 +30,15 @@ class TaskRepository extends \Doctrine\ORM\EntityRepository
         $em = $this->getEntityManager();
         return $em->createQuery("SELECT c FROM TaskPlannerBundle:Category c WHERE c.user = :user AND NOT c.isDeleted = 1")->setParameter("user", $user)->getResult();
     }
+
+    //@todo Find tasks that are not finished and that are not deleted.
+    public function findTasksToRemind($date)
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT t FROM TaskPlannerBundle:Task t WHERE t.toBeFinishedAt < :date ORDER BY t.user ASC'
+            )
+            ->setParameter('date', $date)
+            ->getResult();
+    }
 }
