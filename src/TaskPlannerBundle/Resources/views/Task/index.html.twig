@@ -23,10 +23,20 @@
                     {% endif %}
                     <div class="panel panel-default">
                         <div class="panel-heading accordion">
-                            <h4 class="panel-title tasks">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ task.id }}">
-                                    {{ task.name }}</a>
-                            </h4>
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    <h4 class="panel-title tasks">
+                                        <a data-toggle="collapse" data-parent="#accordion"
+                                           href="#collapse{{ task.id }}">
+                                            {{ task.name }}</a>
+                                    </h4>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="taskFinish"
+                                            name="/task/finish/{{ task.id }}">Finished?
+                                    </button>
+                                </div>
+                            </div>
                             <h6 class="tasks">
                                 Deadline: {{ task.toBeFinishedAt|date('Y-m-d H:i:s') }} | Created
                                 at: {{ task.createdAt|date('Y-m-d H:i:s') }} |

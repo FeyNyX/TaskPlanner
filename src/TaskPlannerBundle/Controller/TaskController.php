@@ -324,4 +324,36 @@ class TaskController extends Controller
             ->getForm()
         ;
     }
+
+    /**
+     * Finishes a task.
+     *
+     * @Route("/finish/{id}", name="task_finish")
+     */
+    public function finishAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        // "findIsDeletedAware" makes sure that user won't be able to delete already deleted task.
+        $entity = $em->getRepository('TaskPlannerBundle:Task')->findIsDeletedAware($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Task entity.');
+        }
+
+        // This condition throws an exception when user tries to delete a task that does not belong to him.
+        if ($this->getUser() != $entity->getUser()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // toggles finish status
+        if ($entity->getIsFinished() == 0) {
+            $entity->setIsFinished(1);
+        } else {
+            $entity->setIsFinished(0);
+        }
+
+        $em->flush();
+
+        return array();
+    }
 }
